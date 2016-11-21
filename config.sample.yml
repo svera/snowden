@@ -1,0 +1,5 @@
+slack_token: ABCDF
+watched_folders:
+    webhooks-test:
+        folderb/folder_b1:
+            - @sergio

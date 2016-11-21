@@ -10,7 +10,13 @@ import (
 
 // Config holds data needed to run a server instance
 type Config struct {
-	SlackToken string `yaml:"slack_token"`
+	SlackToken string             `yaml:"slack_token"`
+	Watched    map[string][]Watch `yaml:"watched"`
+}
+
+type Watch struct {
+	Name        []string `yaml:"name"`
+	Subscribers []string `yaml:"subscribers"`
 }
 
 // Load reads configuration from config.yml and parses it

@@ -5,18 +5,21 @@ import (
 	"fmt"
 	"os"
 
+	"strconv"
+
 	"github.com/google/go-github/github"
 	"github.com/nlopes/slack"
-	"github.com/svera/github-ping/config"
+	"github.com/svera/snowden/config"
+	"github.com/svera/snowden/logic"
 	"github.com/urfave/cli"
 )
 
-func loadConfig() (*config.Config, error) {
-	var cfg *config.Config
+var cfg *config.Config
 
-	f, err := os.Open("/etc/webhook/ping.yml")
+func loadConfig() (*config.Config, error) {
+	f, err := os.Open("/etc/webhook/snowden.yml")
 	if err != nil {
-		return nil, errors.New("Couldn't load configuration file. Check that ping.yml exists and that it can be read. Exiting...")
+		return nil, errors.New("Couldn't load configuration file. Check that snowden.yml exists and that it can be read. Exiting...")
 	}
 	if cfg, err = config.Load(f); err != nil {
 		return nil, err
@@ -25,29 +28,26 @@ func loadConfig() (*config.Config, error) {
 }
 
 func main() {
-	var cfg *config.Config
 	var err error
-
 	if cfg, err = loadConfig(); err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 
-	app := cli.NewApp()
-	api := slack.New(cfg.SlackToken)
+	githubClient := github.NewClient(nil)
+	slackClient := slack.New(cfg.SlackToken)
 
-	app.Name = "Github ping"
+	app := cli.NewApp()
+	lgc := logic.New(slackClient, githubClient.PullRequests, cfg)
+
+	app.Name = "Snowden"
 	app.Usage = "Pass the ping parameters to see them"
 	app.Action = func(c *cli.Context) error {
-		client := github.NewClient(nil)
-		userName := c.Args().Get(0)
-		if _, _, err := client.Users.Get(userName); err == nil {
-			params := slack.PostMessageParameters{}
-			_, _, err := api.PostMessage("@svera", "Hola mundo", params)
-			if err != nil {
-				fmt.Printf("%s\n", err)
-			}
-		}
+		owner := c.Args().Get(0)
+		repo := c.Args().Get(1)
+		number, _ := strconv.Atoi(c.Args().Get(2))
+
+		lgc.Process(owner, repo, number)
 		return nil
 	}
 
