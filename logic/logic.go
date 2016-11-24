@@ -87,17 +87,14 @@ func (l *Logic) notify(subs []string, owner string, repo string, number int, tit
 			Markdown: true,
 		}
 		attachment := slack.Attachment{
-			Fields: []slack.AttachmentField{
-				slack.AttachmentField{
-					Title: title,
-					Value: description,
-				},
-			},
+			Title:     title,
+			TitleLink: url,
+			Text:      description,
 		}
 		params.Attachments = []slack.Attachment{attachment}
 		_, _, err := l.sender.PostMessage(
 			subscriber,
-			fmt.Sprintf("Psssst... *%s* has opened a PR %s that affects files watched by you!", owner, url),
+			fmt.Sprintf("Psssst... *%s* has opened a PR that affects files watched by you!", owner),
 			params,
 		)
 		if err != nil {
