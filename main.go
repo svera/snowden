@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -17,14 +16,12 @@ import (
 var cfg *config.Config
 
 func loadConfig() (*config.Config, error) {
-	f, err := os.Open("/etc/webhook/snowden.yml")
-	if err != nil {
-		return nil, errors.New("Couldn't load configuration file. Check that snowden.yml exists and that it can be read. Exiting...")
-	}
-	if cfg, err = config.Load(f); err != nil {
+	var data []byte
+	var err error
+	if data, err = config.Load("/etc/webhook/snowden.yml"); err != nil {
 		return nil, err
 	}
-	return cfg, nil
+	return config.Parse(data)
 }
 
 func main() {
@@ -41,14 +38,16 @@ func main() {
 	lgc := logic.New(slackClient, githubClient.PullRequests, cfg)
 
 	app.Name = "Snowden"
-	app.Usage = "Pass the ping parameters to see them"
+	app.Usage = "Notify users when their watched files or folders are included in a Github pull request"
 	app.Action = func(c *cli.Context) error {
-		owner := c.Args().Get(0)
-		repo := c.Args().Get(1)
-		number, _ := strconv.Atoi(c.Args().Get(2))
+		action := c.Args().Get(0)
+		owner := c.Args().Get(1)
+		repo := c.Args().Get(2)
+		number, _ := strconv.Atoi(c.Args().Get(3))
+		title := c.Args().Get(4)
+		description := c.Args().Get(5)
 
-		lgc.Process(owner, repo, number)
-		return nil
+		return lgc.Process(action, owner, repo, number, title, description)
 	}
 
 	app.Run(os.Args)

@@ -1,0 +1,22 @@
+# Slack API token
+slack_token: xoxp-2185617187-93896688804-107222009606-931b9baec9d044760f9919a4a8918194
+watched:
+    # Repository name
+    webhooks-test:
+        -
+            # Files or directories names
+            names:
+                - folder_b/folder_b1
+            # Subscribers Slack channels
+            subscribers:
+                ['@channel']
+            # If PR owner if one of these, do not report PR
+            exceptions:
+                []
+        -
+            names:
+                - folder_a/folder_a1
+            subscribers:
+                ['@channel']
+            exceptions:
+                []    
