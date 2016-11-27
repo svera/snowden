@@ -34,7 +34,6 @@ func TestValidateRepos(t *testing.T) {
 	data := []byte(
 		`
         slack_token: TEST
-
         `,
 	)
 
