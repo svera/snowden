@@ -20,46 +20,48 @@ Go to https://api.slack.com/apps?new_app=1 for more information.
 
 * Add the following to webhooks' `hooks.json` configuration file and launch it:
     ```
-    {
-        "id": "snowden",
-        "execute-command": "/path/to/snowden/executable",
-        "command-working-directory": "/path/of/working/directory",
-        "response-message": "I got the payload!",
-        "response-headers":
-        [
-            {
-                "name": "Access-Control-Allow-Origin",
-                "value": "*"
-            }
-        ],
-        "pass-arguments-to-command":
-        [
-            {
-                "source": "payload",
-                "name": "action"
-            },
-            {
-                "source": "payload",
-                "name": "pull_request.head.repo.owner.login"
-            },
-            {
-                "source": "payload",
-                "name": "pull_request.head.repo.name"
-            },      
-            {
-                "source": "payload",
-                "name": "number"
-            },
-            {
-                "source": "payload",
-                "name": "pull_request.title"
-            },
-            {
-                "source": "payload",
-                "name": "pull_request.body"
-            }            
-        ]
-    }
+    [
+        {
+            "id": "snowden",
+            "execute-command": "/path/to/snowden/executable",
+            "command-working-directory": "/path/of/working/directory",
+            "response-message": "I got the payload!",
+            "response-headers":
+            [
+                {
+                    "name": "Access-Control-Allow-Origin",
+                    "value": "*"
+                }
+            ],
+            "pass-arguments-to-command":
+            [
+                {
+                    "source": "payload",
+                    "name": "action"
+                },
+                {
+                    "source": "payload",
+                    "name": "pull_request.head.repo.owner.login"
+                },
+                {
+                    "source": "payload",
+                    "name": "pull_request.head.repo.name"
+                },      
+                {
+                    "source": "payload",
+                    "name": "number"
+                },
+                {
+                    "source": "payload",
+                    "name": "pull_request.title"
+                },
+                {
+                    "source": "payload",
+                    "name": "pull_request.body"
+                }            
+            ]
+        }
+    ]
     ```
 
 * Head to your Github repository settings and add a new webhook that triggers with pull request events, setting its URL 
