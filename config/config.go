@@ -12,6 +12,7 @@ import (
 
 // Config holds data needed to run a server instance
 type Config struct {
+	Debug      bool              `yaml:"debug"`
 	SlackToken string            `yaml:"slack_token"`
 	Watched    map[string][]Rule `yaml:"watched"`
 }

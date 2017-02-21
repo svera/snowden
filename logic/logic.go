@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"log"
+
 	"github.com/google/go-github/github"
 	"github.com/nlopes/slack"
 	"github.com/svera/snowden/config"
@@ -32,10 +34,16 @@ func (l *Logic) Process(action string, owner string, repo string, number int, ti
 	var err error
 
 	if _, ok := l.cfg.Watched[repo]; !ok {
+		if l.cfg.Debug {
+			log.Printf("%s repository is not being watched.\n", repo)
+		}
 		return nil
 	}
 
 	if action != "opened" && action != "reopened" {
+		if l.cfg.Debug {
+			log.Printf("PR %d has not been opened or reopened.\n", number)
+		}
 		return nil
 	}
 
@@ -44,11 +52,15 @@ func (l *Logic) Process(action string, owner string, repo string, number int, ti
 		for _, file := range files {
 			l.appendSubscribers(&subs, file.Filename, l.cfg.Watched[repo], owner)
 		}
-		if len(subs) > 0 {
-			if err = l.notify(subs, owner, repo, number, title, description); err != nil {
-				return err
+		if len(subs) == 0 {
+			if l.cfg.Debug {
+				log.Printf("No one is subscribed to files in PR %d \n", number)
 			}
 		}
+		if err = l.notify(subs, owner, repo, number, title, description); err != nil {
+			return err
+		}
+
 		return nil
 	}
 	return err
@@ -98,7 +110,14 @@ func (l *Logic) notify(subs []string, owner string, repo string, number int, tit
 			params,
 		)
 		if err != nil {
+			if l.cfg.Debug {
+				log.Printf("Error notifying: %s.\n", err.Error)
+			}
 			return err
+		} else {
+			if l.cfg.Debug {
+				log.Printf("Notification sent to %s.\n", subscriber)
+			}
 		}
 	}
 	return nil

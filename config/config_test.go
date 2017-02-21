@@ -47,6 +47,7 @@ func TestValidateRules(t *testing.T) {
 	var err error
 	data := []byte(
 		`
+		debug: false
         slack_token: TEST
         watched:
             test-repo:
@@ -63,6 +64,7 @@ func TestValidateWatchedFiles(t *testing.T) {
 	var err error
 	data := []byte(
 		`
+		debug: false
         slack_token: TEST
         watched:
             test-repo:
@@ -82,6 +84,7 @@ func TestValidateSubscribers(t *testing.T) {
 	var err error
 	data := []byte(
 		`
+		debug: false
         slack_token: TEST
         watched:
             test-repo:
