@@ -31,6 +31,7 @@ func TestValidateToken(t *testing.T) {
 
 func TestValidateRepos(t *testing.T) {
 	var err error
+	// IMPORTANT: REMEMBER TO INDENT YAML DATA WITH SPACES, NOT TABS
 	data := []byte(
 		`
         slack_token: TEST
@@ -45,8 +46,10 @@ func TestValidateRepos(t *testing.T) {
 
 func TestValidateRules(t *testing.T) {
 	var err error
+	// IMPORTANT: REMEMBER TO INDENT YAML DATA WITH SPACES, NOT TABS
 	data := []byte(
 		`
+        debug: false
         slack_token: TEST
         watched:
             test-repo:
@@ -61,8 +64,10 @@ func TestValidateRules(t *testing.T) {
 
 func TestValidateWatchedFiles(t *testing.T) {
 	var err error
+	// IMPORTANT: REMEMBER TO INDENT YAML DATA WITH SPACES, NOT TABS
 	data := []byte(
 		`
+        debug: false
         slack_token: TEST
         watched:
             test-repo:
@@ -80,8 +85,10 @@ func TestValidateWatchedFiles(t *testing.T) {
 
 func TestValidateSubscribers(t *testing.T) {
 	var err error
+	// IMPORTANT: REMEMBER TO INDENT YAML DATA WITH SPACES, NOT TABS
 	data := []byte(
 		`
+        debug: false
         slack_token: TEST
         watched:
             test-repo:
