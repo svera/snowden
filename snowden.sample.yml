@@ -1,5 +1,7 @@
-# Slack API token
 debug: true
+# Github API token (needed to access private repositories' information')
+github_token: Whatever
+# Slack API token
 slack_token: xoxp-2185617187-93896688804-107222009606-931b9baec9d044760f9919a4a8918194
 watched:
     # Repository name

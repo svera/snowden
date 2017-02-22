@@ -12,9 +12,10 @@ import (
 
 // Config holds data needed to run a server instance
 type Config struct {
-	Debug      bool              `yaml:"debug"`
-	SlackToken string            `yaml:"slack_token"`
-	Watched    map[string][]Rule `yaml:"watched"`
+	Debug       bool              `yaml:"debug"`
+	GithubToken string            `yaml:"github_token"`
+	SlackToken  string            `yaml:"slack_token"`
+	Watched     map[string][]Rule `yaml:"watched"`
 }
 
 // Rule contains which files and folders to watch and who to notify in case one of them is to be changed

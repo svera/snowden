@@ -1,8 +1,12 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"os"
+
+	"golang.org/x/oauth2"
 
 	"strconv"
 
@@ -31,7 +35,13 @@ func main() {
 		return
 	}
 
-	githubClient := github.NewClient(nil)
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: cfg.GithubToken},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+
+	githubClient := github.NewClient(tc)
 	slackClient := slack.New(cfg.SlackToken)
 
 	app := cli.NewApp()
@@ -47,7 +57,12 @@ func main() {
 		title := c.Args().Get(4)
 		description := c.Args().Get(5)
 
-		return lgc.Process(action, owner, repo, number, title, description)
+		if err := lgc.Process(action, owner, repo, number, title, description); err != nil {
+			if cfg.Debug {
+				log.Printf("Error: %s\n", err.Error())
+			}
+		}
+		return err
 	}
 
 	app.Run(os.Args)

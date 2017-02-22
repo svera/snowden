@@ -35,7 +35,7 @@ func (l *Logic) Process(action string, owner string, repo string, number int, ti
 	var err error
 
 	if _, ok := l.cfg.Watched[repo]; !ok {
-		if l.cfg.Debug {
+		if l.cfg.Debug == true {
 			log.Printf("%s repository is not being watched.\n", repo)
 		}
 		return nil
@@ -63,6 +63,10 @@ func (l *Logic) Process(action string, owner string, repo string, number int, ti
 		}
 
 		return nil
+	} else {
+		if l.cfg.Debug {
+			log.Printf("Error when trying to list Github repository files: %s", err.Error())
+		}
 	}
 	return err
 }
