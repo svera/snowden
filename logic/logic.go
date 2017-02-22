@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -48,7 +49,7 @@ func (l *Logic) Process(action string, owner string, repo string, number int, ti
 	}
 
 	var subs []string
-	if files, _, err := l.gh.ListFiles(owner, repo, number, &github.ListOptions{}); err == nil {
+	if files, _, err := l.gh.ListFiles(context.Background(), owner, repo, number, &github.ListOptions{}); err == nil {
 		for _, file := range files {
 			l.appendSubscribers(&subs, file.Filename, l.cfg.Watched[repo], owner)
 		}

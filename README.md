@@ -4,7 +4,7 @@ Github pull request, so they can review the changes made on them.
 
 ## Dependencies
 
-Go > 1.5
+Go >= 1.7
 
 This program is designed to work in conjunction with https://github.com/adnanh/webhook. Take a look at its documentation to know
 more about how install and configure it.
