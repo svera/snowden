@@ -1,6 +1,8 @@
 package logic
 
 import (
+	"context"
+
 	"github.com/google/go-github/github"
 	"github.com/nlopes/slack"
 )
@@ -10,5 +12,5 @@ type senderInterface interface {
 }
 
 type githubInterface interface {
-	ListFiles(owner string, repo string, number int, options *github.ListOptions) ([]*github.CommitFile, *github.Response, error)
+	ListFiles(ctx context.Context, owner string, repo string, number int, options *github.ListOptions) ([]*github.CommitFile, *github.Response, error)
 }
