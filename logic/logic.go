@@ -116,7 +116,7 @@ func (l *Logic) notify(subs []string, owner string, repo string, number int, tit
 		)
 		if err != nil {
 			if l.cfg.Debug {
-				log.Printf("Error notifying: %s.\n", err.Error)
+				log.Printf("Error notifying to subscriber %s: %s.\n", err.Error(), subscriber)
 			}
 			return err
 		} else {
