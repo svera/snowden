@@ -41,11 +41,11 @@ Go to https://api.slack.com/apps?new_app=1 for more information.
                 },
                 {
                     "source": "payload",
-                    "name": "pull_request.head.repo.owner.login"
+                    "name": "repository.owner.login"
                 },
                 {
                     "source": "payload",
-                    "name": "pull_request.head.repo.name"
+                    "name": "repository.name"
                 },      
                 {
                     "source": "payload",

@@ -57,6 +57,7 @@ func main() {
 		title := c.Args().Get(4)
 		description := c.Args().Get(5)
 
+		log.Printf("Calling Snowden with params: %s %s %s %d %s %s\n", action, owner, repo, number, title, description)
 		if err := lgc.Process(action, owner, repo, number, title, description); err != nil {
 			if cfg.Debug {
 				log.Printf("Error: %s\n", err.Error())
