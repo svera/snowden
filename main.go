@@ -57,6 +57,14 @@ func main() {
 		title := c.Args().Get(4)
 		description := c.Args().Get(5)
 
+		f, err := os.OpenFile("/var/log/snowden.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatalf("Error opening file: %v", err)
+		}
+		defer f.Close()
+
+		log.SetOutput(f)
+
 		log.Printf("Calling Snowden with params: %s %s %s %d %s %s\n", action, owner, repo, number, title, description)
 		if err := lgc.Process(action, owner, repo, number, title, description); err != nil {
 			if cfg.Debug {
