@@ -33,6 +33,8 @@ func New(sender senderInterface, gh githubInterface, cfg *config.Config) *Logic 
 // it affects any of their watched files or folders.
 func (l *Logic) Process(action string, owner string, repo string, number int, title string, description string) error {
 	var err error
+	var author *string
+	var subs []string
 
 	if _, ok := l.cfg.Watched[repo]; !ok {
 		if l.cfg.Debug == true {
@@ -48,15 +50,8 @@ func (l *Logic) Process(action string, owner string, repo string, number int, ti
 		return nil
 	}
 
-	var subs []string
-	var author *string
-
-	if pr, _, err := l.gh.Get(context.Background(), owner, repo, number); err == nil {
-		author = pr.User.Login
-	} else {
-		if l.cfg.Debug {
-			log.Printf("Error when trying to get PR info: %s", err.Error())
-		}
+	if author, err = l.getPullRequestAuthor(owner, repo, number); err != nil {
+		return err
 	}
 
 	if files, _, err := l.gh.ListFiles(context.Background(), owner, repo, number, &github.ListOptions{}); err == nil {
@@ -77,6 +72,17 @@ func (l *Logic) Process(action string, owner string, repo string, number int, ti
 		}
 	}
 	return err
+}
+
+func (l *Logic) getPullRequestAuthor(owner string, repo string, number int) (*string, error) {
+	if pr, _, err := l.gh.Get(context.Background(), owner, repo, number); err == nil {
+		return pr.User.Login, nil
+	} else {
+		if l.cfg.Debug {
+			log.Printf("Error when trying to get PR info: %s", err.Error())
+		}
+		return nil, err
+	}
 }
 
 func (l *Logic) appendSubscribers(subs *[]string, fileName *string, rules []config.Rule, author *string) {

@@ -17,6 +17,7 @@ var (
 func setup() {
 	fileName1 := "test_folder_a/test_file"
 	fileName2 := "test_folder_b/test_file"
+	prAuthor := "PR author"
 	sender = &mocks.Sender{}
 	gh = &mocks.Github{
 		FakeCommitFiles: []*github.CommitFile{
@@ -25,6 +26,11 @@ func setup() {
 			},
 			&github.CommitFile{
 				Filename: &fileName2,
+			},
+		},
+		FakePullRequest: &github.PullRequest{
+			User: &github.User{
+				Login: &prAuthor,
 			},
 		},
 	}
@@ -72,10 +78,10 @@ func TestProcessNotSubscribedToRepository(t *testing.T) {
 	}
 }
 
-func TestProcessDoesNotNotifyIfPROwnerIsInExceptionsList(t *testing.T) {
+func TestProcessDoesNotNotifyIfPRAuthorIsInExceptionsList(t *testing.T) {
 	setup()
 
-	cfg.Watched["test_repo"][0].Exceptions = []string{"owner"}
+	cfg.Watched["test_repo"][0].Exceptions = []string{"PR author"}
 	lgc := New(sender, gh, cfg)
 	lgc.Process("opened", "owner", "test_repo", 1, "title", "description")
 	if sender.Calls["PostMessage"] != 0 {
