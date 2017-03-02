@@ -13,4 +13,5 @@ type senderInterface interface {
 
 type githubInterface interface {
 	ListFiles(ctx context.Context, owner string, repo string, number int, options *github.ListOptions) ([]*github.CommitFile, *github.Response, error)
+	Get(ctx context.Context, owner string, repo string, number int) (*github.PullRequest, *github.Response, error)
 }

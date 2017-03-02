@@ -49,20 +49,28 @@ func (l *Logic) Process(action string, owner string, repo string, number int, ti
 	}
 
 	var subs []string
+	var author *string
+
+	if pr, _, err := l.gh.Get(context.Background(), owner, repo, number); err == nil {
+		author = pr.User.Login
+	} else {
+		if l.cfg.Debug {
+			log.Printf("Error when trying to get PR info: %s", err.Error())
+		}
+	}
+
 	if files, _, err := l.gh.ListFiles(context.Background(), owner, repo, number, &github.ListOptions{}); err == nil {
 		for _, file := range files {
-			l.appendSubscribers(&subs, file.Filename, l.cfg.Watched[repo], owner)
+			l.appendSubscribers(&subs, file.Filename, l.cfg.Watched[repo], author)
 		}
 		if len(subs) == 0 {
 			if l.cfg.Debug {
 				log.Printf("No one is subscribed to files in PR %d \n", number)
 			}
 		}
-		if err = l.notify(subs, owner, repo, number, title, description); err != nil {
+		if err = l.notify(subs, owner, repo, number, title, description, author); err != nil {
 			return err
 		}
-
-		return nil
 	} else {
 		if l.cfg.Debug {
 			log.Printf("Error when trying to list Github repository files: %s", err.Error())
@@ -71,10 +79,10 @@ func (l *Logic) Process(action string, owner string, repo string, number int, ti
 	return err
 }
 
-func (l *Logic) appendSubscribers(subs *[]string, fileName *string, rules []config.Rule, owner string) {
+func (l *Logic) appendSubscribers(subs *[]string, fileName *string, rules []config.Rule, author *string) {
 	for _, rule := range rules {
 		for _, exception := range rule.Exceptions {
-			if exception == owner {
+			if exception == *author {
 				return
 			}
 		}
@@ -97,7 +105,7 @@ func (l *Logic) appendIfNotIn(subs *[]string, subscriber string) {
 	*subs = append(*subs, subscriber)
 }
 
-func (l *Logic) notify(subs []string, owner string, repo string, number int, title string, description string) error {
+func (l *Logic) notify(subs []string, owner string, repo string, number int, title string, description string, author *string) error {
 	url := fmt.Sprintf("https://github.com/%s/%s/pull/%d", owner, repo, number)
 	for _, subscriber := range subs {
 		params := slack.PostMessageParameters{
@@ -111,7 +119,7 @@ func (l *Logic) notify(subs []string, owner string, repo string, number int, tit
 		params.Attachments = []slack.Attachment{attachment}
 		_, _, err := l.sender.PostMessage(
 			subscriber,
-			fmt.Sprintf("Psssst... *%s* has opened a PR that affects files watched by you!", owner),
+			fmt.Sprintf("Psssst... *%s* has opened a PR that affects files watched by you!", *author),
 			params,
 		)
 		if err != nil {
